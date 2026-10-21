@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Rastreador de Postulaciones</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-theme="light">
+    <div class="app-shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Seguimiento laboral</p>
+          <h1>Rastreador de Postulaciones</h1>
+        </div>
+        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema">
+          <span class="toggle-icon">🌙</span>
+          <span class="toggle-text">Oscuro</span>
+        </button>
+      </header>
+
+      <main class="content">
+        <section class="panel form-panel">
+          <h2>Nueva postulación</h2>
+
+          <form id="applicationForm">
+            <div class="field-group">
+              <label for="company">Empresa</label>
+              <input id="company" name="company" type="text" placeholder="Ej: Acme Labs" required />
+            </div>
+
+            <div class="field-group">
+              <label for="role">Rol</label>
+              <input id="role" name="role" type="text" placeholder="Ej: Frontend Developer" required />
+            </div>
+
+            <div class="field-row">
+              <div class="field-group">
+                <label for="date">Fecha</label>
+                <input id="date" name="date" type="date" required />
+              </div>
+
+              <div class="field-group">
+                <label for="status">Estado</label>
+                <select id="status" name="status">
+                  <option value="Enviado">Enviado</option>
+                  <option value="En proceso">En proceso</option>
+                  <option value="Rechazado">Rechazado</option>
+                  <option value="Oferta">Oferta</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-group">
+              <label for="notes">Notas de seguimiento</label>
+              <textarea id="notes" name="notes" rows="3" placeholder="Ej: Contacté con RR. HH. y me pidieron una demo técnica."></textarea>
+            </div>
+
+            <button class="primary-btn" type="submit">Agregar postulación</button>
+          </form>
+        </section>
+
+        <section class="panel list-panel">
+          <div class="list-header">
+            <h2>Postulaciones</h2>
+            <span id="countBadge" class="count-badge">0</span>
+          </div>
+
+          <div id="applicationsList" class="applications-list" aria-live="polite"></div>
+          <p id="emptyState" class="empty-state">Aún no hay postulaciones registradas.</p>
+        </section>
+      </main>
+    </div>
+
+    <script src="script.js"></script>
+  </body>
+</html>

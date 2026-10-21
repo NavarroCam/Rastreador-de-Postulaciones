@@ -1,433 +1,434 @@
-:root {
-  --bg: #eef5fb;
-  --bg-accent: #dfeaf7;
-  --surface: #ffffff;
-  --surface-soft: #f6faff;
-  --card-border: rgba(17, 24, 39, 0.08);
-  --text: #102033;
-  --text-soft: #4d647d;
-  --primary: #3b82f6;
-  --primary-soft: rgba(59, 130, 246, 0.1);
-  --success: #0f766e;
-  --warning: #b45309;
-  --danger: #b91c1c;
-  --sent: #4f46e5;
-  --sent-soft: rgba(79, 70, 229, 0.12);
-  --process: #d97706;
-  --process-soft: rgba(217, 119, 6, 0.12);
-  --reject: #dc2626;
-  --reject-soft: rgba(220, 38, 38, 0.12);
-  --offer: #059669;
-  --offer-soft: rgba(5, 150, 105, 0.12);
-  --shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
-}
+const STORAGE_KEY = "job-applications";
+const STATUS_OPTIONS = ["Enviado", "En proceso", "Rechazado", "Oferta"];
+const DEFAULT_APPLICATIONS = [
+  {
+    id: 1,
+    company: "Northwind Studio",
+    role: "Frontend Developer",
+    date: "2026-10-12",
+    status: "En proceso",
+    notes: "Entrevista técnica agendada para el viernes. Revisar portafolio y preparar ejemplos.",
+    attachment: "",
+    reminder: "",
+  },
+  {
+    id: 2,
+    company: "BluePeak",
+    role: "Product Designer",
+    date: "2026-10-04",
+    status: "Enviado",
+    notes: "CV enviado con portfolio actualizado. Seguir seguimiento en 7 días.",
+    attachment: "",
+    reminder: "",
+  },
+  {
+    id: 3,
+    company: "Verde Systems",
+    role: "QA Analyst",
+    date: "2026-09-27",
+    status: "Rechazado",
+    notes: "Respuesta negativa. Solicitar feedback para mejorar perfil y aplicaciones futuras.",
+    attachment: "",
+    reminder: "",
+  },
+];
 
-body[data-theme="dark"] {
-  --bg: #0f172a;
-  --bg-accent: #111c2f;
-  --surface: #122033;
-  --surface-soft: #15263f;
-  --card-border: rgba(148, 163, 184, 0.14);
-  --text: #e5edf8;
-  --text-soft: #a8bbd3;
-  --primary: #7aa9ff;
-  --primary-soft: rgba(122, 169, 255, 0.14);
-  --success: #5eead4;
-  --warning: #fdba74;
-  --danger: #fca5a5;
-  --sent: #a5b4fc;
-  --sent-soft: rgba(165, 180, 252, 0.12);
-  --process: #fbbf24;
-  --process-soft: rgba(251, 191, 36, 0.12);
-  --reject: #fca5a5;
-  --reject-soft: rgba(252, 165, 165, 0.12);
-  --offer: #6ee7b7;
-  --offer-soft: rgba(110, 231, 183, 0.12);
-  --shadow: 0 18px 38px rgba(2, 6, 23, 0.48);
-}
+let applications = loadApplications();
 
-* {
-  box-sizing: border-box;
-}
+const form = document.querySelector("#applicationForm");
+const listPanel = document.querySelector(".list-panel");
+const applicationsList = document.querySelector("#applicationsList");
+const emptyState = document.querySelector("#emptyState");
+const countBadge = document.querySelector("#countBadge");
+const themeToggle = document.querySelector("#themeToggle");
+let searchTerm = "";
+let statusFilter = "all";
 
-html {
-  scroll-behavior: smooth;
-}
-
-body {
-  margin: 0;
-  min-height: 100vh;
-  color: var(--text);
-  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-accent) 100%);
-  font-family: "Inter", sans-serif;
-  transition: background 0.25s ease, color 0.25s ease;
-}
-
-button,
-input,
-select,
-textarea {
-  font: inherit;
-}
-
-.app-shell {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 20px 16px 48px;
-}
-
-.topbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 20px;
-}
-
-.brand-block {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.eyebrow {
-  margin: 0;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-soft);
-}
-
-h1 {
-  margin: 0;
-  font-size: clamp(1.8rem, 5vw, 2.7rem);
-  line-height: 1.1;
-}
-
-.owner-tag {
-  display: inline-flex;
-  align-self: flex-start;
-  align-items: center;
-  padding: 5px 10px;
-  border-radius: 999px;
-  background: var(--primary-soft);
-  color: var(--primary);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
-}
-
-.theme-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  padding: 10px 14px;
-  border: 1px solid var(--card-border);
-  border-radius: 999px;
-  background: var(--surface);
-  color: var(--text);
-  box-shadow: var(--shadow);
-  cursor: pointer;
-  transition: transform 0.2s ease, border-color 0.2s ease;
-}
-
-.theme-toggle:hover {
-  transform: translateY(-1px);
-}
-
-.content {
-  display: grid;
-  gap: 20px;
-}
-
-.panel {
-  background: var(--surface);
-  border: 1px solid var(--card-border);
-  border-radius: 20px;
-  box-shadow: var(--shadow);
-  padding: 20px;
-}
-
-h2 {
-  margin: 0 0 18px;
-  font-size: 1.2rem;
-}
-
-#applicationForm {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.field-group {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-
-.field-row {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
-}
-
-label {
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: var(--text-soft);
-}
-
-input,
-select,
-textarea {
-  width: 100%;
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  background: var(--surface-soft);
-  color: var(--text);
-  padding: 12px 14px;
-  transition: border-color 0.2s ease, box-shadow 0.2s ease;
-}
-
-input:focus,
-select:focus,
-textarea:focus {
-  outline: none;
-  border-color: var(--primary);
-  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-}
-
-textarea {
-  resize: vertical;
-  min-height: 90px;
-}
-
-.primary-btn {
-  border: none;
-  border-radius: 12px;
-  background: linear-gradient(135deg, var(--primary) 0%, #5b9af8 100%);
-  color: white;
-  font-weight: 700;
-  padding: 13px 16px;
-  cursor: pointer;
-  transition: transform 0.2s ease, opacity 0.2s ease;
-}
-
-.primary-btn:hover {
-  transform: translateY(-1px);
-}
-
-.list-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 18px;
-}
-
-.count-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 34px;
-  height: 34px;
-  padding: 0 10px;
-  border-radius: 999px;
-  background: var(--primary-soft);
-  color: var(--primary);
-  font-weight: 700;
-}
-
-.list-toolbar {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
-  margin-bottom: 14px;
-}
-
-.applications-list {
-  display: grid;
-  gap: 14px;
-}
-
-.application-card {
-  border: 1px solid var(--card-border);
-  background: linear-gradient(180deg, var(--surface-soft) 0%, var(--surface) 100%);
-  border-radius: 16px;
-  padding: 16px;
-}
-
-.card-top {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.card-main {
-  display: grid;
-  gap: 10px;
-}
-
-.editable-field {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.field-label {
-  font-size: 0.75rem;
-  color: var(--text-soft);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-}
-
-.card-input {
-  background: var(--surface);
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  padding: 10px 12px;
-}
-
-.card-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-}
-
-.status-select {
-  flex: 1 1 160px;
-  min-height: 42px;
-  border: 1px solid var(--card-border);
-  background: var(--surface-soft);
-  color: var(--text);
-  border-radius: 10px;
-  padding: 10px 12px;
-}
-
-.tiny-btn {
-  border: 1px solid var(--card-border);
-  background: var(--surface);
-  color: var(--text);
-  border-radius: 10px;
-  padding: 9px 10px;
-  cursor: pointer;
-  font-size: 0.76rem;
-  font-weight: 600;
-}
-
-.status-badge {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 120px;
-  min-height: 36px;
-  padding: 8px 12px;
-  border-radius: 999px;
-  font-size: 0.8rem;
-  font-weight: 800;
-  letter-spacing: 0.02em;
-  border: 1px solid transparent;
-  line-height: 1;
-}
-
-.status-Enviado,
-.status-select option[value="Enviado"] {
-  background: var(--sent-soft);
-  border-color: rgba(79, 70, 229, 0.22);
-  color: var(--sent);
-}
-
-.status-En\ proceso,
-.status-select option[value="En proceso"] {
-  background: var(--process-soft);
-  border-color: rgba(217, 119, 6, 0.22);
-  color: var(--process);
-}
-
-.status-Rechazado,
-.status-select option[value="Rechazado"] {
-  background: var(--reject-soft);
-  border-color: rgba(220, 38, 38, 0.22);
-  color: var(--reject);
-}
-
-.status-Oferta,
-.status-select option[value="Oferta"] {
-  background: var(--offer-soft);
-  border-color: rgba(5, 150, 105, 0.2);
-  color: var(--offer);
-}
-
-.meta-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-  color: var(--text-soft);
-  font-size: 0.85rem;
-  margin: 8px 0;
-}
-
-.meta-row span {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.notes {
-  margin: 10px 0 0;
-  color: var(--text-soft);
-  line-height: 1.55;
-  font-size: 0.92rem;
-}
-
-.empty-state {
-  display: none;
-  margin: 0;
-  padding: 18px 8px 4px;
-  color: var(--text-soft);
-  text-align: center;
-}
-
-.empty-state.visible {
-  display: block;
-}
-
-@media (min-width: 700px) {
-  .app-shell {
-    padding-top: 30px;
+function loadApplications() {
+  try {
+    const savedApplications = JSON.parse(localStorage.getItem(STORAGE_KEY));
+    if (Array.isArray(savedApplications) && savedApplications.length > 0) {
+      return savedApplications;
+    }
+  } catch (error) {
+    console.warn("No se pudieron leer las postulaciones guardadas.", error);
   }
 
-  .content {
-    grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
-    align-items: start;
-  }
+  return structuredClone(DEFAULT_APPLICATIONS);
+}
 
-  .field-row {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  .card-top {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .card-main {
-    flex: 1;
-  }
-
-  .card-actions {
-    align-items: flex-start;
-    justify-content: flex-end;
-  }
-
-  .list-toolbar {
-    grid-template-columns: 1.5fr 0.8fr;
+function saveApplications() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(applications));
+  } catch (error) {
+    console.warn("No se pudieron guardar las postulaciones.", error);
   }
 }
 
-@media (max-width: 420px) {
-  .tiny-btn,
-  .status-select {
-    width: 100%;
+function formatDate(dateString) {
+  if (!dateString) return "Sin fecha";
+  const date = new Date(dateString + "T12:00:00");
+  return new Intl.DateTimeFormat("es-AR", {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(date);
+}
+
+function escapeHtml(value = "") {
+  return String(value)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/\"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function getStatusClass(status) {
+  return status.replace(/\s+/g, "-");
+}
+
+function ensureListControls() {
+  const toolbar = document.createElement("div");
+  toolbar.className = "list-toolbar";
+  toolbar.innerHTML = `
+    <input
+      id="searchInput"
+      type="search"
+      placeholder="Buscar empresa o rol"
+      aria-label="Buscar postulaciones"
+    />
+    <select id="statusFilter" aria-label="Filtrar por estado">
+      <option value="all">Todos</option>
+      ${STATUS_OPTIONS.map(
+        (status) => `<option value="${status}">${status}</option>`
+      ).join("")}
+    </select>
+  `;
+
+  const currentToolbar = listPanel.querySelector(".list-toolbar");
+  if (!currentToolbar) {
+    listPanel.insertBefore(toolbar, applicationsList);
+  }
+
+  const searchInput = document.querySelector("#searchInput");
+  const statusSelect = document.querySelector("#statusFilter");
+
+  if (searchInput) {
+    searchInput.value = searchTerm;
+    searchInput.addEventListener("input", (event) => {
+      searchTerm = event.target.value.trim().toLowerCase();
+      renderApplications();
+    });
+  }
+
+  if (statusSelect) {
+    statusSelect.value = statusFilter;
+    statusSelect.addEventListener("change", (event) => {
+      statusFilter = event.target.value;
+      renderApplications();
+    });
   }
 }
+
+function getVisibleApplications() {
+  return applications.filter((item) => {
+    const matchesSearch = !searchTerm || `${item.company} ${item.role}`.toLowerCase().includes(searchTerm);
+    const matchesStatus = statusFilter === "all" || item.status === statusFilter;
+    return matchesSearch && matchesStatus;
+  });
+}
+
+function renderApplications() {
+  applicationsList.innerHTML = "";
+
+  const sortedApplications = [...getVisibleApplications()].sort(
+    (a, b) => new Date(b.date) - new Date(a.date)
+  );
+
+  sortedApplications.forEach((item) => {
+    const card = document.createElement("article");
+    card.className = "application-card";
+    card.dataset.status = item.status;
+
+    card.innerHTML = `
+      <div class="card-top">
+        <div class="card-main">
+          <div class="editable-field">
+            <label class="field-label">Empresa</label>
+            <input
+              class="card-input company-input"
+              data-field="company"
+              data-id="${item.id}"
+              value="${escapeHtml(item.company)}"
+            />
+          </div>
+          <div class="editable-field">
+            <label class="field-label">Rol</label>
+            <input
+              class="card-input role-input"
+              data-field="role"
+              data-id="${item.id}"
+              value="${escapeHtml(item.role)}"
+            />
+          </div>
+        </div>
+        <div class="card-actions">
+          <select class="status-select" data-id="${item.id}" aria-label="Cambiar estado de postulación">
+            ${STATUS_OPTIONS.map(
+              (status) => `<option value="${status}" ${status === item.status ? "selected" : ""}>${status}</option>`
+            ).join("")}
+          </select>
+          <button class="tiny-btn import-linkedin" data-action="import-linkedin" data-id="${item.id}" type="button">LinkedIn</button>
+          <button class="tiny-btn reminder-btn" data-action="reminder" data-id="${item.id}" type="button">Recordatorio</button>
+          <button class="tiny-btn attachment-btn" data-action="attachment" data-id="${item.id}" type="button">Adjuntar CV</button>
+        </div>
+      </div>
+      <div class="meta-row">
+        <span>📅 ${formatDate(item.date)}</span>
+        ${item.attachment ? `<span>📎 ${item.attachment}</span>` : ""}
+        ${item.reminder ? `<span>⏰ ${formatDate(item.reminder)}</span>` : ""}
+      </div>
+      ${item.notes ? `<p class="notes">${escapeHtml(item.notes)}</p>` : ""}
+    `;
+
+    applicationsList.appendChild(card);
+  });
+
+  countBadge.textContent = String(sortedApplications.length);
+  emptyState.classList.toggle("visible", sortedApplications.length === 0);
+}
+
+function saveTheme(theme) {
+  document.body.dataset.theme = theme;
+  localStorage.setItem("application-theme", theme);
+
+  const isDark = theme === "dark";
+  themeToggle.querySelector(".toggle-icon").textContent = isDark ? "☀️" : "🌙";
+  themeToggle.querySelector(".toggle-text").textContent = isDark ? "Claro" : "Oscuro";
+}
+
+function initializeTheme() {
+  const savedTheme = localStorage.getItem("application-theme");
+  const preferredDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+  saveTheme(savedTheme || (preferredDark ? "dark" : "light"));
+}
+
+function updateApplicationField(id, field, value) {
+  const item = applications.find((app) => app.id === Number(id));
+  if (!item) return;
+
+  item[field] = value;
+  saveApplications();
+  renderApplications();
+}
+
+function handleStatusChange(event) {
+  const select = event.target.closest(".status-select");
+  if (!select) return;
+
+  const appId = Number(select.dataset.id);
+  const newStatus = select.value;
+  const item = applications.find((app) => app.id === appId);
+
+  if (!item) return;
+
+  item.status = newStatus;
+  saveApplications();
+  renderApplications();
+}
+
+function handleCardInput(event) {
+  const input = event.target.closest(".card-input");
+  if (!input) return;
+
+  const field = input.dataset.field;
+  const id = Number(input.dataset.id);
+  const value = input.value.trim();
+
+  if (!field || !id) return;
+
+  updateApplicationField(id, field, value);
+}
+
+function handleAttachment(event) {
+  const button = event.target.closest(".attachment-btn");
+  if (!button) return;
+
+  const id = Number(button.dataset.id);
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".pdf,.doc,.docx";
+
+  fileInput.addEventListener("change", () => {
+    const file = fileInput.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = () => {
+      const item = applications.find((app) => app.id === id);
+      if (!item) return;
+
+      item.attachment = file.name;
+      item.attachmentData = reader.result;
+      saveApplications();
+      renderApplications();
+    };
+
+    reader.readAsDataURL(file);
+  });
+
+  fileInput.click();
+}
+
+function handleReminder(event) {
+  const button = event.target.closest(".reminder-btn");
+  if (!button) return;
+
+  const id = Number(button.dataset.id);
+  const item = applications.find((app) => app.id === id);
+  if (!item) return;
+
+  const reminderDate = prompt(
+    "Ingresá la fecha del recordatorio (YYYY-MM-DD):",
+    item.reminder || new Date(Date.now() + 86400000).toISOString().slice(0, 10)
+  );
+
+  if (!reminderDate) return;
+
+  item.reminder = reminderDate;
+  saveApplications();
+  renderApplications();
+
+  if ("Notification" in window && Notification.permission === "granted") {
+    new Notification("Recordatorio de postulación", {
+      body: `${item.company} - ${item.role}`,
+    });
+  }
+}
+
+function handleLinkedInImport(event) {
+  const button = event.target.closest(".import-linkedin");
+  if (!button) return;
+
+  const id = Number(button.dataset.id);
+  const url = prompt(
+    "Pegá la URL de LinkedIn que quieras importar:",
+    "https://www.linkedin.com/jobs/view/1234567890"
+  );
+
+  if (!url) return;
+
+  try {
+    const parsed = new URL(url);
+    const item = applications.find((app) => app.id === id);
+    if (!item) return;
+
+    const companyMatch = parsed.pathname.match(/\/company\/([^/]+)/i);
+    const titleMatch = parsed.pathname.match(/\/jobs\/view\//i);
+
+    item.company = companyMatch ? decodeURIComponent(companyMatch[1]).replace(/-/g, " ") : "LinkedIn";
+    item.role = titleMatch ? "Vacante importada desde LinkedIn" : "Cargo importado";
+    item.notes = item.notes ? `${item.notes} | Importado desde LinkedIn.` : "Importado desde LinkedIn.";
+
+    saveApplications();
+    renderApplications();
+  } catch (error) {
+    console.warn("URL de LinkedIn inválida.", error);
+  }
+}
+
+applicationsList.addEventListener("change", (event) => {
+  handleStatusChange(event);
+  handleAttachment(event);
+});
+
+applicationsList.addEventListener("input", (event) => {
+  handleCardInput(event);
+});
+
+applicationsList.addEventListener("click", (event) => {
+  const action = event.target.closest("[data-action]");
+  if (!action) return;
+
+  const actionName = action.dataset.action;
+  if (actionName === "reminder") {
+    handleReminder(event);
+  }
+
+  if (actionName === "attachment") {
+    handleAttachment(event);
+  }
+
+  if (actionName === "import-linkedin") {
+    handleLinkedInImport(event);
+  }
+});
+
+themeToggle.addEventListener("click", () => {
+  const nextTheme = document.body.dataset.theme === "dark" ? "light" : "dark";
+  saveTheme(nextTheme);
+});
+
+ensureListControls();
+initializeTheme();
+renderApplications();
+
+if ("Notification" in window && Notification.permission === "default") {
+  Notification.requestPermission().catch(() => {});
+}
+
+if (!form) {
+  console.warn("No se encontró el formulario principal. La lógica sigue funcionando en la lista.");
+}
+
+window.addEventListener("storage", (event) => {
+  if (event.key === STORAGE_KEY) {
+    try {
+      const nextApplications = JSON.parse(event.newValue || "[]");
+      if (Array.isArray(nextApplications)) {
+        applications = nextApplications;
+        renderApplications();
+      }
+    } catch (error) {
+      console.warn("No se pudo sincronizar el almacenamiento local.", error);
+    }
+  }
+});
+
+window.addEventListener("beforeunload", () => {
+  saveApplications();
+});
+
+form?.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const formData = new FormData(form);
+  const company = formData.get("company").toString().trim();
+  const role = formData.get("role").toString().trim();
+  const date = formData.get("date").toString();
+  const status = formData.get("status").toString();
+  const notes = formData.get("notes").toString().trim();
+
+  if (!company || !role || !date) {
+    return;
+  }
+
+  applications.push({
+    id: Date.now(),
+    company,
+    role,
+    date,
+    status: STATUS_OPTIONS.includes(status) ? status : "Enviado",
+    notes,
+    attachment: "",
+    reminder: "",
+  });
+
+  saveApplications();
+  form.reset();
+  document.querySelector("#status").value = "Enviado";
+  renderApplications();
+});
+
+renderApplications();

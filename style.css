@@ -1,84 +1,393 @@
-<!DOCTYPE html>
-<html lang="es">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Rastreador de Postulaciones</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
-      rel="stylesheet"
-    />
-    <link rel="stylesheet" href="style.css" />
-  </head>
-  <body data-theme="light">
-    <div class="app-shell">
-      <header class="topbar">
-        <div class="brand-block">
-          <p class="eyebrow">Seguimiento laboral</p>
-          <h1>Rastreador de Postulaciones</h1>
-          <span class="owner-tag">por NavarroCam</span>
-        </div>
-        <button id="themeToggle" class="theme-toggle" type="button" aria-label="Cambiar tema">
-          <span class="toggle-icon">🌙</span>
-          <span class="toggle-text">Oscuro</span>
-        </button>
-      </header>
+:root {
+  --bg: #eef5fb;
+  --bg-accent: #dfeaf7;
+  --surface: #ffffff;
+  --surface-soft: #f6faff;
+  --card-border: rgba(17, 24, 39, 0.08);
+  --text: #102033;
+  --text-soft: #4d647d;
+  --primary: #3b82f6;
+  --primary-soft: rgba(59, 130, 246, 0.1);
+  --success: #0f766e;
+  --warning: #b45309;
+  --danger: #b91c1c;
+  --shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
+}
 
-      <main class="content">
-        <section class="panel form-panel">
-          <h2>Nueva postulación</h2>
+body[data-theme="dark"] {
+  --bg: #0f172a;
+  --bg-accent: #111c2f;
+  --surface: #122033;
+  --surface-soft: #15263f;
+  --card-border: rgba(148, 163, 184, 0.14);
+  --text: #e5edf8;
+  --text-soft: #a8bbd3;
+  --primary: #7aa9ff;
+  --primary-soft: rgba(122, 169, 255, 0.14);
+  --success: #5eead4;
+  --warning: #fdba74;
+  --danger: #fca5a5;
+  --shadow: 0 18px 38px rgba(2, 6, 23, 0.48);
+}
 
-          <form id="applicationForm">
-            <div class="field-group">
-              <label for="company">Empresa</label>
-              <input id="company" name="company" type="text" placeholder="Ej: Acme Labs" required />
-            </div>
+* {
+  box-sizing: border-box;
+}
 
-            <div class="field-group">
-              <label for="role">Rol</label>
-              <input id="role" name="role" type="text" placeholder="Ej: Frontend Developer" required />
-            </div>
+html {
+  scroll-behavior: smooth;
+}
 
-            <div class="field-row">
-              <div class="field-group">
-                <label for="date">Fecha</label>
-                <input id="date" name="date" type="date" required />
-              </div>
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background: linear-gradient(180deg, var(--bg) 0%, var(--bg-accent) 100%);
+  font-family: "Inter", sans-serif;
+  transition: background 0.25s ease, color 0.25s ease;
+}
 
-              <div class="field-group">
-                <label for="status">Estado</label>
-                <select id="status" name="status">
-                  <option value="Enviado">Enviado</option>
-                  <option value="En proceso">En proceso</option>
-                  <option value="Rechazado">Rechazado</option>
-                  <option value="Oferta">Oferta</option>
-                </select>
-              </div>
-            </div>
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
 
-            <div class="field-group">
-              <label for="notes">Notas de seguimiento</label>
-              <textarea id="notes" name="notes" rows="3" placeholder="Ej: Contacté con RR. HH. y me pidieron una demo técnica."></textarea>
-            </div>
+.app-shell {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 20px 16px 48px;
+}
 
-            <button class="primary-btn" type="submit">Agregar postulación</button>
-          </form>
-        </section>
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 20px;
+}
 
-        <section class="panel list-panel">
-          <div class="list-header">
-            <h2>Postulaciones</h2>
-            <span id="countBadge" class="count-badge">0</span>
-          </div>
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-soft);
+}
 
-          <div id="applicationsList" class="applications-list" aria-live="polite"></div>
-          <p id="emptyState" class="empty-state">Aún no hay postulaciones registradas.</p>
-        </section>
-      </main>
-    </div>
+h1 {
+  margin: 0;
+  font-size: clamp(1.8rem, 5vw, 2.7rem);
+  line-height: 1.1;
+}
 
-    <script src="script.js"></script>
-  </body>
-</html>
+.theme-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border: 1px solid var(--card-border);
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: var(--shadow);
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.theme-toggle:hover {
+  transform: translateY(-1px);
+}
+
+.content {
+  display: grid;
+  gap: 20px;
+}
+
+.panel {
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: 20px;
+  box-shadow: var(--shadow);
+  padding: 20px;
+}
+
+h2 {
+  margin: 0 0 18px;
+  font-size: 1.2rem;
+}
+
+#applicationForm {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.field-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--text-soft);
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  background: var(--surface-soft);
+  color: var(--text);
+  padding: 12px 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 90px;
+}
+
+.primary-btn {
+  border: none;
+  border-radius: 12px;
+  background: linear-gradient(135deg, var(--primary) 0%, #5b9af8 100%);
+  color: white;
+  font-weight: 700;
+  padding: 13px 16px;
+  cursor: pointer;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.primary-btn:hover {
+  transform: translateY(-1px);
+}
+
+.list-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 18px;
+}
+
+.count-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 34px;
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: var(--primary-soft);
+  color: var(--primary);
+  font-weight: 700;
+}
+
+.list-toolbar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.applications-list {
+  display: grid;
+  gap: 14px;
+}
+
+.application-card {
+  border: 1px solid var(--card-border);
+  background: linear-gradient(180deg, var(--surface-soft) 0%, var(--surface) 100%);
+  border-radius: 16px;
+  padding: 16px;
+}
+
+.card-top {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.card-main {
+  display: grid;
+  gap: 10px;
+}
+
+.editable-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 0.75rem;
+  color: var(--text-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.card-input {
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.status-select {
+  flex: 1 1 160px;
+  min-height: 42px;
+  border: 1px solid var(--card-border);
+  background: var(--surface-soft);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.tiny-btn {
+  border: 1px solid var(--card-border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 9px 10px;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 600;
+}
+
+.status-badge {
+  min-width: 100px;
+  text-align: center;
+  padding: 8px 10px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 700;
+  border: 1px solid transparent;
+}
+
+.status-Enviado,
+.status-select option[value="Enviado"] {
+  background: rgba(148, 163, 184, 0.14);
+  border-color: rgba(148, 163, 184, 0.24);
+  color: #475569;
+}
+
+.status-En\ proceso,
+.status-select option[value="En proceso"] {
+  background: rgba(245, 158, 11, 0.12);
+  border-color: rgba(245, 158, 11, 0.2);
+  color: var(--warning);
+}
+
+.status-Rechazado,
+.status-select option[value="Rechazado"] {
+  background: rgba(239, 68, 68, 0.10);
+  border-color: rgba(239, 68, 68, 0.18);
+  color: var(--danger);
+}
+
+.status-Oferta,
+.status-select option[value="Oferta"] {
+  background: rgba(15, 118, 110, 0.11);
+  border-color: rgba(15, 118, 110, 0.18);
+  color: var(--success);
+}
+
+.meta-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  color: var(--text-soft);
+  font-size: 0.85rem;
+  margin: 8px 0;
+}
+
+.meta-row span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.notes {
+  margin: 10px 0 0;
+  color: var(--text-soft);
+  line-height: 1.55;
+  font-size: 0.92rem;
+}
+
+.empty-state {
+  display: none;
+  margin: 0;
+  padding: 18px 8px 4px;
+  color: var(--text-soft);
+  text-align: center;
+}
+
+.empty-state.visible {
+  display: block;
+}
+
+@media (min-width: 700px) {
+  .app-shell {
+    padding-top: 30px;
+  }
+
+  .content {
+    grid-template-columns: minmax(300px, 420px) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .field-row {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .card-top {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .card-main {
+    flex: 1;
+  }
+
+  .card-actions {
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+
+  .list-toolbar {
+    grid-template-columns: 1.5fr 0.8fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .tiny-btn,
+  .status-select {
+    width: 100%;
+  }
+}

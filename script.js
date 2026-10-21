@@ -170,7 +170,7 @@ function renderApplications() {
           </div>
         </div>
         <div class="card-actions">
-          <select class="status-select" data-id="${item.id}" data-status="${item.status}" aria-label="Cambiar estado de postulación">
+          <select class="status-select" data-id="${item.id}" aria-label="Cambiar estado de postulación">
             ${STATUS_OPTIONS.map(
               (status) => `<option value="${status}" ${status === item.status ? "selected" : ""}>${status}</option>`
             ).join("")}
@@ -231,7 +231,6 @@ function handleStatusChange(event) {
   if (!item) return;
 
   item.status = newStatus;
-  select.dataset.status = newStatus;
   saveApplications();
   renderApplications();
 }

@@ -1,6 +1,5 @@
-const STATUS_OPTIONS = ["Enviado", "En proceso", "Rechazado", "Oferta"];
-
-const applications = [
+const STORAGE_KEY = "job-applications";
+const DEFAULT_APPLICATIONS = [
   {
     id: 1,
     company: "Northwind Studio",
@@ -27,11 +26,37 @@ const applications = [
   },
 ];
 
+const STATUS_OPTIONS = ["Enviado", "En proceso", "Rechazado", "Oferta"];
+
+let applications = loadApplications();
+
 const form = document.querySelector("#applicationForm");
 const applicationsList = document.querySelector("#applicationsList");
 const emptyState = document.querySelector("#emptyState");
 const countBadge = document.querySelector("#countBadge");
 const themeToggle = document.querySelector("#themeToggle");
+
+function loadApplications() {
+  try {
+    const savedApplications = JSON.parse(localStorage.getItem(STORAGE_KEY));
+
+    if (Array.isArray(savedApplications) && savedApplications.length > 0) {
+      return savedApplications;
+    }
+  } catch (error) {
+    console.warn("No se pudieron leer las postulaciones guardadas.", error);
+  }
+
+  return DEFAULT_APPLICATIONS;
+}
+
+function saveApplications() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(applications));
+  } catch (error) {
+    console.warn("No se pudieron guardar las postulaciones.", error);
+  }
+}
 
 function formatDate(dateString) {
   const date = new Date(dateString + "T12:00:00");
@@ -111,6 +136,8 @@ form.addEventListener("submit", (event) => {
     status: STATUS_OPTIONS.includes(status) ? status : "Enviado",
     notes,
   });
+
+  saveApplications();
 
   form.reset();
   document.querySelector("#status").value = "Enviado";

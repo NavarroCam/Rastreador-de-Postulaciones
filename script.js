@@ -84,10 +84,6 @@ function escapeHtml(value = "") {
     .replace(/'/g, "&#039;");
 }
 
-function getStatusClass(status) {
-  return status.replace(/\s+/g, "-");
-}
-
 function ensureListControls() {
   const toolbar = document.createElement("div");
   toolbar.className = "list-toolbar";
@@ -182,6 +178,7 @@ function renderApplications() {
           <button class="tiny-btn import-linkedin" data-action="import-linkedin" data-id="${item.id}" type="button">LinkedIn</button>
           <button class="tiny-btn reminder-btn" data-action="reminder" data-id="${item.id}" type="button">Recordatorio</button>
           <button class="tiny-btn attachment-btn" data-action="attachment" data-id="${item.id}" type="button">Adjuntar CV</button>
+          <button class="tiny-btn delete-btn" data-action="delete" data-id="${item.id}" type="button">Eliminar</button>
         </div>
       </div>
       <div class="meta-row">
@@ -338,6 +335,23 @@ function handleLinkedInImport(event) {
   }
 }
 
+function handleDeleteApplication(event) {
+  const button = event.target.closest(".delete-btn");
+  if (!button) return;
+
+  const id = Number(button.dataset.id);
+  const item = applications.find((app) => app.id === id);
+
+  if (!item) return;
+
+  const confirmed = window.confirm(`¿Eliminar la postulación de ${item.company}?`);
+  if (!confirmed) return;
+
+  applications = applications.filter((app) => app.id !== id);
+  saveApplications();
+  renderApplications();
+}
+
 applicationsList.addEventListener("change", (event) => {
   handleStatusChange(event);
   handleAttachment(event);
@@ -352,6 +366,12 @@ applicationsList.addEventListener("click", (event) => {
   if (!action) return;
 
   const actionName = action.dataset.action;
+
+  if (actionName === "delete") {
+    handleDeleteApplication(event);
+    return;
+  }
+
   if (actionName === "reminder") {
     handleReminder(event);
   }

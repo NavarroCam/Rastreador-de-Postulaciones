@@ -1,4 +1,4 @@
-:root {
+ :root {
   --bg: #eef5fb;
   --bg-accent: #dfeaf7;
   --surface: #ffffff;
@@ -202,6 +202,13 @@ textarea {
   font-weight: 700;
 }
 
+.list-toolbar {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
 .applications-list {
   display: grid;
   gap: 14px;
@@ -216,21 +223,61 @@ textarea {
 
 .card-top {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 12px;
-  margin-bottom: 12px;
 }
 
-.company-name {
-  margin: 0 0 4px;
-  font-size: 1.1rem;
+.card-main {
+  display: grid;
+  gap: 10px;
 }
 
-.role-name {
-  margin: 0;
+.editable-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  font-size: 0.75rem;
   color: var(--text-soft);
-  font-size: 0.96rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.card-input {
+  background: var(--surface);
+  border: 1px solid var(--card-border);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.status-select {
+  flex: 1 1 160px;
+  min-height: 42px;
+  border: 1px solid var(--card-border);
+  background: var(--surface-soft);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+}
+
+.tiny-btn {
+  border: 1px solid var(--card-border);
+  background: var(--surface);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 9px 10px;
+  cursor: pointer;
+  font-size: 0.76rem;
+  font-weight: 600;
 }
 
 .status-badge {
@@ -243,25 +290,29 @@ textarea {
   border: 1px solid transparent;
 }
 
-.status-Enviado {
-  background: rgba(59, 130, 246, 0.12);
-  border-color: rgba(59, 130, 246, 0.2);
-  color: var(--primary);
+.status-Enviado,
+.status-select option[value="Enviado"] {
+  background: rgba(148, 163, 184, 0.14);
+  border-color: rgba(148, 163, 184, 0.24);
+  color: #475569;
 }
 
-.status-En\ proceso {
+.status-En\ proceso,
+.status-select option[value="En proceso"] {
   background: rgba(245, 158, 11, 0.12);
   border-color: rgba(245, 158, 11, 0.2);
   color: var(--warning);
 }
 
-.status-Rechazado {
+.status-Rechazado,
+.status-select option[value="Rechazado"] {
   background: rgba(239, 68, 68, 0.10);
   border-color: rgba(239, 68, 68, 0.18);
   color: var(--danger);
 }
 
-.status-Oferta {
+.status-Oferta,
+.status-select option[value="Oferta"] {
   background: rgba(15, 118, 110, 0.11);
   border-color: rgba(15, 118, 110, 0.18);
   color: var(--success);
@@ -273,7 +324,7 @@ textarea {
   gap: 10px;
   color: var(--text-soft);
   font-size: 0.85rem;
-  margin-bottom: 8px;
+  margin: 8px 0;
 }
 
 .meta-row span {
@@ -314,4 +365,30 @@ textarea {
   .field-row {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .card-top {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .card-main {
+    flex: 1;
+  }
+
+  .card-actions {
+    align-items: flex-start;
+    justify-content: flex-end;
+  }
+
+  .list-toolbar {
+    grid-template-columns: 1.5fr 0.8fr;
+  }
 }
+
+@media (max-width: 420px) {
+  .tiny-btn,
+  .status-select {
+    width: 100%;
+  }
+}
+

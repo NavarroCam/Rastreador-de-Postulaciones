@@ -84,18 +84,28 @@ textarea {
   margin-bottom: 20px;
 }
 
+.brand-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
 .eyebrow {
-  margin: 0 0 8px;
-  font-size: 0.72rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--text-soft);
+  display: none;
 }
 
 h1 {
   margin: 0;
-  font-size: clamp(1.8rem, 5vw, 2.7rem);
+  font-size: clamp(1.8rem, 4vw, 2.4rem);
   line-height: 1.1;
+}
+
+.subtitle {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-soft);
+  font-weight: 600;
+  letter-spacing: 0.02em;
 }
 
 .theme-toggle {
@@ -290,6 +300,26 @@ textarea {
   color: var(--text);
   border-radius: 10px;
   padding: 10px 12px;
+}
+
+.status-select option[value="Enviado"] {
+  background: var(--sent-soft);
+  color: var(--sent);
+}
+
+.status-select option[value="En proceso"] {
+  background: var(--process-soft);
+  color: var(--process);
+}
+
+.status-select option[value="Rechazado"] {
+  background: var(--reject-soft);
+  color: var(--reject);
+}
+
+.status-select option[value="Oferta"] {
+  background: var(--offer-soft);
+  color: var(--offer);
 }
 
 .tiny-btn {

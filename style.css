@@ -11,6 +11,14 @@
   --success: #0f766e;
   --warning: #b45309;
   --danger: #b91c1c;
+  --sent: #4f46e5;
+  --sent-soft: rgba(79, 70, 229, 0.12);
+  --process: #d97706;
+  --process-soft: rgba(217, 119, 6, 0.12);
+  --reject: #dc2626;
+  --reject-soft: rgba(220, 38, 38, 0.12);
+  --offer: #059669;
+  --offer-soft: rgba(5, 150, 105, 0.12);
   --shadow: 0 14px 32px rgba(15, 23, 42, 0.08);
 }
 
@@ -27,6 +35,14 @@ body[data-theme="dark"] {
   --success: #5eead4;
   --warning: #fdba74;
   --danger: #fca5a5;
+  --sent: #a5b4fc;
+  --sent-soft: rgba(165, 180, 252, 0.14);
+  --process: #fbbf24;
+  --process-soft: rgba(251, 191, 36, 0.14);
+  --reject: #fca5a5;
+  --reject-soft: rgba(252, 165, 165, 0.14);
+  --offer: #6ee7b7;
+  --offer-soft: rgba(110, 231, 183, 0.14);
   --shadow: 0 18px 38px rgba(2, 6, 23, 0.48);
 }
 
@@ -219,6 +235,7 @@ textarea {
   background: linear-gradient(180deg, var(--surface-soft) 0%, var(--surface) 100%);
   border-radius: 16px;
   padding: 16px;
+  min-width: 0;
 }
 
 .card-top {
@@ -230,12 +247,14 @@ textarea {
 .card-main {
   display: grid;
   gap: 10px;
+  min-width: 0;
 }
 
 .editable-field {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  min-width: 0;
 }
 
 .field-label {
@@ -250,6 +269,10 @@ textarea {
   border: 1px solid var(--card-border);
   border-radius: 10px;
   padding: 10px 12px;
+  width: 100%;
+  min-width: 0;
+  white-space: normal;
+  overflow: visible;
 }
 
 .card-actions {
@@ -280,42 +303,53 @@ textarea {
   font-weight: 600;
 }
 
+.delete-btn {
+  border-color: rgba(220, 38, 38, 0.2);
+  color: var(--reject);
+  background: var(--reject-soft);
+}
+
 .status-badge {
-  min-width: 100px;
-  text-align: center;
-  padding: 8px 10px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 120px;
+  min-height: 36px;
+  padding: 8px 12px;
   border-radius: 999px;
-  font-size: 0.82rem;
-  font-weight: 700;
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.02em;
   border: 1px solid transparent;
+  line-height: 1;
 }
 
 .status-Enviado,
 .status-select option[value="Enviado"] {
-  background: rgba(148, 163, 184, 0.14);
-  border-color: rgba(148, 163, 184, 0.24);
-  color: #475569;
+  background: var(--sent-soft);
+  border-color: rgba(79, 70, 229, 0.22);
+  color: var(--sent);
 }
 
 .status-En\ proceso,
 .status-select option[value="En proceso"] {
-  background: rgba(245, 158, 11, 0.12);
-  border-color: rgba(245, 158, 11, 0.2);
-  color: var(--warning);
+  background: var(--process-soft);
+  border-color: rgba(217, 119, 6, 0.22);
+  color: var(--process);
 }
 
 .status-Rechazado,
 .status-select option[value="Rechazado"] {
-  background: rgba(239, 68, 68, 0.10);
-  border-color: rgba(239, 68, 68, 0.18);
-  color: var(--danger);
+  background: var(--reject-soft);
+  border-color: rgba(220, 38, 38, 0.22);
+  color: var(--reject);
 }
 
 .status-Oferta,
 .status-select option[value="Oferta"] {
-  background: rgba(15, 118, 110, 0.11);
-  border-color: rgba(15, 118, 110, 0.18);
-  color: var(--success);
+  background: var(--offer-soft);
+  border-color: rgba(5, 150, 105, 0.2);
+  color: var(--offer);
 }
 
 .meta-row {

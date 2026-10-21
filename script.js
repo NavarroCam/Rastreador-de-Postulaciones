@@ -561,3 +561,4 @@ window.addEventListener("storage", (event) => {
 applyTheme(document.documentElement.dataset.theme || "light");
 resetForm();
 render();
+

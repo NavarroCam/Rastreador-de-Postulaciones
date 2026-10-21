@@ -1,4 +1,4 @@
-:root {
+.root {
   --bg: #eef5fb;
   --bg-accent: #dfeaf7;
   --surface: #ffffff;
@@ -300,25 +300,44 @@ textarea {
   color: var(--text);
   border-radius: 10px;
   padding: 10px 12px;
+  appearance: none;
+  -webkit-appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, currentColor 50%), linear-gradient(135deg, currentColor 50%, transparent 50%);
+  background-position: calc(100% - 16px) calc(50% - 3px), calc(100% - 11px) calc(50% - 3px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+  padding-right: 36px;
 }
 
-.status-select option[value="Enviado"] {
-  background: var(--sent-soft);
+.status-select[data-status="Enviado"],
+.status-select option[value="Enviado"],
+.status-Enviado {
+  background-color: var(--sent-soft);
+  border-color: rgba(79, 70, 229, 0.22);
   color: var(--sent);
 }
 
-.status-select option[value="En proceso"] {
-  background: var(--process-soft);
+.status-select[data-status="En proceso"],
+.status-select option[value="En proceso"],
+.status-En\ proceso {
+  background-color: var(--process-soft);
+  border-color: rgba(217, 119, 6, 0.22);
   color: var(--process);
 }
 
-.status-select option[value="Rechazado"] {
-  background: var(--reject-soft);
+.status-select[data-status="Rechazado"],
+.status-select option[value="Rechazado"],
+.status-Rechazado {
+  background-color: var(--reject-soft);
+  border-color: rgba(220, 38, 38, 0.22);
   color: var(--reject);
 }
 
-.status-select option[value="Oferta"] {
-  background: var(--offer-soft);
+.status-select[data-status="Oferta"],
+.status-select option[value="Oferta"],
+.status-Oferta {
+  background-color: var(--offer-soft);
+  border-color: rgba(5, 150, 105, 0.2);
   color: var(--offer);
 }
 
@@ -352,34 +371,6 @@ textarea {
   letter-spacing: 0.02em;
   border: 1px solid transparent;
   line-height: 1;
-}
-
-.status-Enviado,
-.status-select option[value="Enviado"] {
-  background: var(--sent-soft);
-  border-color: rgba(79, 70, 229, 0.22);
-  color: var(--sent);
-}
-
-.status-En\ proceso,
-.status-select option[value="En proceso"] {
-  background: var(--process-soft);
-  border-color: rgba(217, 119, 6, 0.22);
-  color: var(--process);
-}
-
-.status-Rechazado,
-.status-select option[value="Rechazado"] {
-  background: var(--reject-soft);
-  border-color: rgba(220, 38, 38, 0.22);
-  color: var(--reject);
-}
-
-.status-Oferta,
-.status-select option[value="Oferta"] {
-  background: var(--offer-soft);
-  border-color: rgba(5, 150, 105, 0.2);
-  color: var(--offer);
 }
 
 .meta-row {
@@ -455,3 +446,4 @@ textarea {
     width: 100%;
   }
 }
+
